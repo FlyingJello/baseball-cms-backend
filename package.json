@@ -1,0 +1,25 @@
+{
+  "name": "baseball-cms-backend",
+  "version": "1.0.0",
+  "description": "baseball cms backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FlyingJello/baseball-cms-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FlyingJello/baseball-cms-backend/issues"
+  },
+  "homepage": "https://github.com/FlyingJello/baseball-cms-backend#readme",
+  "dependencies": {
+    "bookshelf": "^0.13.3",
+    "knex": "^0.13.0",
+    "restify": "^7.2.1",
+    "sqlite3": "^4.0.1"
+  }
+}
