@@ -2,9 +2,12 @@
   "name": "baseball-cms-backend",
   "version": "1.0.0",
   "description": "baseball cms backend",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "set PORT=5977 && node src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate:dev": "./node_modules/.bin/knex.cmd migrate:latest",
+    "rollback:dev": "./node_modules/.bin/knex.cmd migrate:rollback"
   },
   "repository": {
     "type": "git",
@@ -17,9 +20,21 @@
   },
   "homepage": "https://github.com/FlyingJello/baseball-cms-backend#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "bookshelf": "^0.13.3",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
     "knex": "^0.13.0",
-    "restify": "^7.2.1",
-    "sqlite3": "^4.0.1"
+    "sqlite3": "^4.0.2"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "eslint": "^5.1.0",
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "mocha": "^5.2.0"
   }
 }
