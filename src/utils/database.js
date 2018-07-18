@@ -14,4 +14,7 @@ if (process.env.NODE_ENV === 'PROD') {
 }
 
 const knex = require('knex')(dbConfig)
-module.exports = require('bookshelf')(knex)
+const session = require('express-session')
+const KnexSessionStore = require('connect-session-knex')(session)
+exports.session = new KnexSessionStore({knex: knex})
+exports.bookshelf = require('bookshelf')(knex)
