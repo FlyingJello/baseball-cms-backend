@@ -3,7 +3,8 @@ module.exports = {
     client: 'sqlite3',
     connection: {
       filename: './db/baseball.db'
-    }
+    },
+    useNullAsDefault: true
   },
 
   staging: {
