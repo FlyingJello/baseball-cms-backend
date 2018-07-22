@@ -18,18 +18,8 @@ exports.userDetail = (req, res) => {
 
 exports.authenticate = (req, res) => {
   new User().fetch({username: req.body.username})
-    .then(user => {
-      if (crypto.verify(req.body.password, user.attributes.password, user.attributes.salt)) {
-        req.session.authenticated = true
-        res.send({
-          error: false,
-          data: 'successfully authenticated'
-        })
-      } else {
-        req.session.authenticated = false
-        throw new errorHandler.AuthenticationException('Invalid username or password')
-      }
-    })
+    .then(user => verifyUser(req, user))
+    .then(() => sendSuccess(res))
     .catch(err => errorHandler.send(err, res))
 }
 
@@ -39,6 +29,17 @@ exports.createUser = (req, res) => {
     .then(person => setUser(req.body.login, person).save())
     .then(() => sendSuccess(res))
     .catch(err => errorHandler.send(err, res))
+}
+
+// --------------------------------------------------------------
+
+function verifyUser (req, user) {
+  if (crypto.verify(req.body.password, user.attributes.password, user.attributes.salt)) {
+    req.session.authenticated = true
+  } else {
+    req.session.authenticated = false
+    throw new errorHandler.AuthenticationException('Invalid username or password')
+  }
 }
 
 function setUser (login, person) {
@@ -69,7 +70,7 @@ function checkIfUserDontExists (username) {
 function sendSuccess (response) {
   response.send({
     error: false,
-    data: 'success'
+    data: { success: true }
   })
 }
 
