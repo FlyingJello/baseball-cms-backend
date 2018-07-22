@@ -1,5 +1,6 @@
 const crypto = require('../utils/crypto')
 const errorHandler = require('../utils/error')
+const helper = require('../utils/helper')
 
 const User = require('../models/user')
 const Person = require('../models/person')
@@ -7,18 +8,27 @@ const Person = require('../models/person')
 exports.userList = (req, res) => {
   User.fetchAll()
     .then(users => {
-      res.send(users)
+      users = users.toJSON().map(elem => helper.trimObject(elem, ['salt', 'password']))
+      sendData(res, users)
     })
     .catch(res.send)
 }
 
 exports.userDetail = (req, res) => {
-  res.send('NOT IMPLEMENTED' + req.params.id)
+  new User().where({id: req.params.id})
+    .fetch({withRelated: ['person']})
+    .then(function (user) {
+      if (!user) { throw new errorHandler.AttributeException('Invalid user id') }
+      user = helper.trimObject(user.toJSON(), ['salt', 'password'])
+      sendData(res, user)
+    })
+    .catch(err => errorHandler.send(err, res))
 }
 
 exports.authenticate = (req, res) => {
-  new User().fetch({username: req.body.username})
-    .then(user => verifyUser(req, user))
+  new User().where('username', req.body.username)
+    .fetch()
+    .then(user => verifyPassword(req, user))
     .then(() => sendSuccess(res))
     .catch(err => errorHandler.send(err, res))
 }
@@ -33,7 +43,7 @@ exports.createUser = (req, res) => {
 
 // --------------------------------------------------------------
 
-function verifyUser (req, user) {
+function verifyPassword (req, user) {
   if (crypto.verify(req.body.password, user.attributes.password, user.attributes.salt)) {
     req.session.authenticated = true
   } else {
@@ -68,9 +78,14 @@ function checkIfUserDontExists (username) {
 }
 
 function sendSuccess (response) {
+  sendData(response, { success: true })
+}
+
+function sendData (response, data) {
+  response.statusCode = 200
   response.send({
     error: false,
-    data: { success: true }
+    data: data
   })
 }
 

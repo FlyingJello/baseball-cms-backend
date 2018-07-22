@@ -4,8 +4,8 @@
   "description": "baseball cms backend",
   "main": "app.js",
   "scripts": {
-    "start": "set PORT=5977 && set SESSION_SECRET=D280622FCB73680789FE628D29EA4C46 && node src/app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "set NODE_ENV=DEV&& set PORT=5977&& set SESSION_SECRET=D280622FCB73680789FE628D29EA4C46&& node src/app.js",
+    "test": "set NODE_ENV=TEST&& set SESSION_SECRET=D280622FCB73680789FE628D29EA4C46&& mocha test --slow 380 --exit",
     "migrate:dev": "./node_modules/.bin/knex.cmd migrate:latest",
     "rollback:dev": "./node_modules/.bin/knex.cmd migrate:rollback"
   },
@@ -22,6 +22,7 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "bookshelf": "^0.13.3",
+    "chai-http": "^4.0.0",
     "connect-session-knex": "^1.4.0",
     "express": "^4.16.3",
     "express-session": "^1.15.6",

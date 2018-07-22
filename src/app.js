@@ -32,6 +32,6 @@ app.get('/api', (req, res) => {
   res.send('hello')
 })
 
-app.listen(PORT, () => {
+module.exports = app.listen(PORT, () => {
   console.log('Server started on', PORT)
 })
