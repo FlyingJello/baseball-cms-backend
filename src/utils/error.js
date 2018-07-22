@@ -7,17 +7,17 @@ exports.send = (error, res) => {
   })
 }
 
-exports.AttributeException = class AttributeException {
+exports.RequestParameterException = class RequestParameterException {
   constructor (message) {
-    this.code = 400
+    this.code = 200
     this.message = message
-    this.name = 'AttributeException'
+    this.name = 'RequestParameterException'
   }
 }
 
 exports.AuthenticationException = class AuthenticationException {
   constructor (message) {
-    this.code = 422
+    this.code = 200
     this.message = message
     this.name = 'AuthenticationException'
   }

@@ -40,6 +40,38 @@ describe('Routes', () => {
         })
     })
 
+    it('post /user/authentication (user auth)', done => {
+      chai.request(server)
+        .post('/user/authenticate')
+        .send({})
+        .end(function (err, res) {
+          should.not.exist(err)
+          res.should.have.status(200)
+          res.body.should.have.all.keys('error', 'data')
+          res.body.error.should.equal(true)
+          done()
+        })
+    })
+
+    it('post /user/authentication (user auth)', done => {
+      chai.request(server)
+        .post('/user/authenticate')
+        .send({
+          login: {
+            'username': 'doug',
+            'password': 'admin123'
+          }
+        })
+        .end(function (err, res) {
+          should.not.exist(err)
+          res.should.have.status(200)
+          res.body.should.have.all.keys('error', 'data')
+          res.body.error.should.equal(false)
+          res.body.data.success.should.equal(true)
+          done()
+        })
+    })
+
     it('get /user (user list)', done => {
       chai.request(server)
         .get('/user')

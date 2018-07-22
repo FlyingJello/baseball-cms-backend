@@ -18,7 +18,7 @@ exports.userDetail = (req, res) => {
   new User().where({id: req.params.id})
     .fetch({withRelated: ['person']})
     .then(function (user) {
-      if (!user) { throw new errorHandler.AttributeException('Invalid user id') }
+      if (!user) { throw new errorHandler.RequestParameterException('Invalid user id') }
       user = helper.trimObject(user.toJSON(), ['salt', 'password'])
       sendData(res, user)
     })
@@ -26,17 +26,18 @@ exports.userDetail = (req, res) => {
 }
 
 exports.authenticate = (req, res) => {
-  new User().where('username', req.body.username)
-    .fetch()
-    .then(user => {
-      verifyPassword(req, user)
-    })
+  getBody(req)
+    .then(getUsername)
+    .then(username => new User().where('username', username).fetch())
+    .then(user => verifyPassword(req, user))
     .then(() => sendSuccess(res))
     .catch(err => errorHandler.send(err, res))
 }
 
 exports.createUser = (req, res) => {
-  checkIfUserDontExists(req.body.login.username)
+  getBody(req)
+    .then(getUsername)
+    .then(checkIfUserDontExists)
     .then(() => setPerson(req.body.person).save())
     .then(person => setUser(req.body.login, person).save())
     .then(() => sendSuccess(res))
@@ -45,12 +46,32 @@ exports.createUser = (req, res) => {
 
 // --------------------------------------------------------------
 
+function getBody (request) {
+  return new Promise((resolve, reject) => {
+    if (request && request.body) {
+      resolve(request.body)
+    } else {
+      reject(new errorHandler.RequestParameterException('Invalid request body'))
+    }
+  })
+}
+
+function getUsername (body) {
+  return new Promise((resolve, reject) => {
+    if (body.login) {
+      resolve(body.login.username)
+    } else {
+      reject(new errorHandler.RequestParameterException('Invalid username'))
+    }
+  })
+}
+
 function verifyPassword (req, user) {
   if (!user) {
-    throw new errorHandler.AuthenticationException('Invalid username or password')
+    throw new errorHandler.RequestParameterException('Invalid username or password')
   }
   user = user.toJSON()
-  if (crypto.verify(req.body.password, user.password, user.salt)) {
+  if (crypto.verify(req.body.login.password, user.password, user.salt)) {
     req.session.authenticated = true
   } else {
     req.session.authenticated = false
@@ -60,7 +81,7 @@ function verifyPassword (req, user) {
 
 function setUser (login, person) {
   if (!validateUser(login)) {
-    throw new errorHandler.AttributeException('Invalid or null user attributes')
+    throw new errorHandler.RequestParameterException('Invalid or null user attributes')
   }
 
   const crypted = crypto.saltHash(login.password)
@@ -78,7 +99,7 @@ function checkIfUserDontExists (username) {
     .fetch()
     .then(currentUser => {
       if (currentUser) {
-        throw new errorHandler.AttributeException('Username is already taken')
+        throw new errorHandler.RequestParameterException('Username is already taken')
       }
     })
 }
@@ -97,7 +118,7 @@ function sendData (response, data) {
 
 function setPerson (person) {
   if (!validatePerson(person)) {
-    throw new errorHandler.AttributeException('Invalid or null person attributes')
+    throw new errorHandler.RequestParameterException('Invalid or null person attributes')
   }
 
   return new Person()
