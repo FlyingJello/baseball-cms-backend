@@ -7,7 +7,8 @@
     "start": "set NODE_ENV=DEV&& set PORT=5977&& set SESSION_SECRET=D280622FCB73680789FE628D29EA4C46&& node src/app.js",
     "test": "set NODE_ENV=TEST&& set SESSION_SECRET=D280622FCB73680789FE628D29EA4C46&& mocha test --slow 380 --exit",
     "migrate:dev": "./node_modules/.bin/knex.cmd migrate:latest",
-    "rollback:dev": "./node_modules/.bin/knex.cmd migrate:rollback"
+    "rollback:dev": "./node_modules/.bin/knex.cmd migrate:rollback",
+    "seed": "./node_modules/.bin/knex.cmd seed:run"
   },
   "repository": {
     "type": "git",
