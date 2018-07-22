@@ -28,7 +28,9 @@ exports.userDetail = (req, res) => {
 exports.authenticate = (req, res) => {
   new User().where('username', req.body.username)
     .fetch()
-    .then(user => verifyPassword(req, user.toJSON()))
+    .then(user => {
+      verifyPassword(req, user)
+    })
     .then(() => sendSuccess(res))
     .catch(err => errorHandler.send(err, res))
 }
@@ -44,6 +46,10 @@ exports.createUser = (req, res) => {
 // --------------------------------------------------------------
 
 function verifyPassword (req, user) {
+  if (!user) {
+    throw new errorHandler.AuthenticationException('Invalid username or password')
+  }
+  user = user.toJSON()
   if (crypto.verify(req.body.password, user.password, user.salt)) {
     req.session.authenticated = true
   } else {
