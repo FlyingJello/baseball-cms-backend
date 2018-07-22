@@ -28,7 +28,7 @@ exports.userDetail = (req, res) => {
 exports.authenticate = (req, res) => {
   new User().where('username', req.body.username)
     .fetch()
-    .then(user => verifyPassword(req, user))
+    .then(user => verifyPassword(req, user.toJSON()))
     .then(() => sendSuccess(res))
     .catch(err => errorHandler.send(err, res))
 }
@@ -44,7 +44,7 @@ exports.createUser = (req, res) => {
 // --------------------------------------------------------------
 
 function verifyPassword (req, user) {
-  if (crypto.verify(req.body.password, user.attributes.password, user.attributes.salt)) {
+  if (crypto.verify(req.body.password, user.password, user.salt)) {
     req.session.authenticated = true
   } else {
     req.session.authenticated = false
