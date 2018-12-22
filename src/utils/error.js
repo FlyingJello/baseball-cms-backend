@@ -9,7 +9,7 @@ exports.send = (error, res) => {
 
 exports.RequestParameterException = class RequestParameterException {
   constructor (message) {
-    this.code = 200
+    this.code = 400
     this.message = message
     this.name = 'RequestParameterException'
   }
@@ -17,7 +17,7 @@ exports.RequestParameterException = class RequestParameterException {
 
 exports.AuthenticationException = class AuthenticationException {
   constructor (message) {
-    this.code = 200
+    this.code = 400
     this.message = message
     this.name = 'AuthenticationException'
   }
