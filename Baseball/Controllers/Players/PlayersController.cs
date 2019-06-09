@@ -12,9 +12,6 @@ namespace Baseball.Controllers.Players
     [ApiController]
     public class PlayersController : ControllerBase
     {
-
-
-
         [HttpPost]
         public IActionResult Add(Player player)
         {

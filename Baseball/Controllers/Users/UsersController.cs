@@ -50,7 +50,7 @@ namespace Baseball.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            return Ok("Authenticated");
+            return Ok(tokenString);
         }
 
         [HttpPost("register")]

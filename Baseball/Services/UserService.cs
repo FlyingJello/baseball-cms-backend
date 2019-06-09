@@ -1,5 +1,6 @@
 ﻿using Baseball.Data;
 using Baseball.Entities;
+using Baseball.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -17,17 +18,17 @@ namespace Baseball.Services
 
     public class UserService : IUserService
     {
-        private readonly BaseballContext context;
+        private readonly IUserRepository _userRepository;
 
-        public UserService(BaseballContext context)
+        public UserService(IUserRepository userRepository)
         {
-            this.context = context;
+            _userRepository = userRepository;
         }
 
         public User Authenticate(string username, string password)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password)) return null;
-            var user = context.Users.SingleOrDefault(x => x.Username == username);
+            var user = _userRepository.FindUserByUsername(username);
 
             if (user == null) return null;
             if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt)) return null;
@@ -61,18 +62,11 @@ namespace Baseball.Services
                 throw new ArgumentException("Password is required");
             }
 
-            if (context.Users.Any(x => x.Username == user.Username))
-            {
-                throw new ArgumentException("Username \"" + user.Username + "\" is already taken");
-            }
-
             CreatePasswordHash(user.Password, out byte[] passwordHash, out byte[] passwordSalt);
-
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
 
-            context.Users.Add(user);
-            context.SaveChanges();
+            _userRepository.AddUser(user);
 
             return user;
         }
@@ -91,7 +85,7 @@ namespace Baseball.Services
 
         public User GetById(int id)
         {
-            return context.Users.Find(id);
+            return _userRepository.FindUserById(id);
         }
     }
 }
