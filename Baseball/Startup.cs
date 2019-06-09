@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Baseball.Data;
-using Baseball.Mappers;
 using Baseball.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -35,8 +34,9 @@ namespace Baseball
 
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<UserMapper, UserMapper>();
+
             services.AddDbContext<BaseballContext>(options => options.UseSqlite(Configuration.GetConnectionString("sqlite")));
         }
 

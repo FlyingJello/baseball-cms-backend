@@ -12,5 +12,20 @@ namespace Baseball.Entities
         public string Password { get; set; }
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+
+        public User(string username, string password)
+        {
+            Username = username;
+            Password = password;
+        }
+
+
+        public User(int id, string username, byte[] passwordHash, byte[] passwordSalt)
+        {
+            Id = id;
+            PasswordHash = passwordHash;
+            PasswordSalt = passwordSalt;
+            Username = username;
+        }
     }
 }

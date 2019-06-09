@@ -5,8 +5,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Baseball.Dto;
-using Baseball.Mappers;
 using Baseball.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,22 +19,22 @@ namespace Baseball.Controllers
     {
         private readonly IConfiguration configuration;
         private readonly IUserService userService;
-        private readonly UserMapper userMapper;
 
-        public UsersController(IConfiguration configuration, IUserService userService, UserMapper userMapper)
+        public UsersController(IConfiguration configuration, IUserService userService)
         {
             this.configuration = configuration;
             this.userService = userService;
-            this.userMapper = userMapper;
         }
 
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody]UserDto userDto)
+        public IActionResult Authenticate(UserDto userDto)
         {
             var user = userService.Authenticate(userDto.Username, userDto.Password);
 
             if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+            {
+                return BadRequest("Username or password is incorrect");
+            }
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(configuration["JwtToken"]);
@@ -52,17 +50,15 @@ namespace Baseball.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
 
-            return Ok(userMapper.ModelToDto(user));
+            return Ok("Authenticated");
         }
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody]UserDto userDto)
-        {
-            var user = userMapper.DtoToModel(userDto);
-
+        public IActionResult Register(UserDto userDto)
+        { 
             try
             {
-                userService.Create(user);
+                userService.Create(userDto.ToModel());
                 return Ok();
             }
             catch (ArgumentException ex)

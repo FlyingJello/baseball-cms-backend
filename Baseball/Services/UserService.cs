@@ -8,6 +8,13 @@ using System.Threading.Tasks;
 
 namespace Baseball.Services
 {
+    public interface IUserService
+    {
+        User Authenticate(string username, string password);
+        User Create(User user);
+        User GetById(int id);
+    }
+
     public class UserService : IUserService
     {
         private readonly BaseballContext context;
@@ -59,8 +66,7 @@ namespace Baseball.Services
                 throw new ArgumentException("Username \"" + user.Username + "\" is already taken");
             }
 
-            byte[] passwordHash, passwordSalt;
-            CreatePasswordHash(user.Password, out passwordHash, out passwordSalt);
+            CreatePasswordHash(user.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
