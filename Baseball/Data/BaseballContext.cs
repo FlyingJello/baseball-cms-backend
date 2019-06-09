@@ -11,6 +11,8 @@ namespace Baseball.Data
     {
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Player> Players { get; set; }
+
         public BaseballContext(DbContextOptions<BaseballContext> options) : base(options)
         {
             Database.EnsureCreated();
